@@ -12,7 +12,7 @@ GREEN = '\033[32m'
 ENDC = '\033[0m'
 
 
-def main(filename):
+def main_Scanner(filename):
     """Read the rule file and start listening."""
 
     #now = datetime.now()
@@ -46,4 +46,4 @@ def main(filename):
 if __name__ == '__main__':
     ruleList = list()
     filename = "RulesToUse.txt"
-    main(filename)
+    main_Scanner(filename)

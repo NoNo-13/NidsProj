@@ -61,7 +61,6 @@ class Rule:
                     if (len(kv) >= 2):
                         option = kv[0].strip()
                         value = kv[1].strip()
-
                         if (option == "msg"):
                             self.msg = value
                         elif (option == "tos"):
