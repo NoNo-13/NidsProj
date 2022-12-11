@@ -11,8 +11,9 @@ BLUE = '\033[34m'
 GREEN = '\033[32m'
 ENDC = '\033[0m'
 
-class Scanner():
+class Scanner(Sniffer):
     def __init__(self):
+        super(Scanner, self).__init__()
         self.ruleList = list()
     def main_Scanner(self, filename):
         """Read the rule file and start listening."""
@@ -34,7 +35,8 @@ class Scanner():
             print(str(errorCount) + " rules have errors and could not be read.")
 
         # Begin sniffing
-        sniffer = Sniffer(self.ruleList)
+        sniffer = Sniffer()
+        sniffer.set_ruleList(self.ruleList)
         sniffer.run()
 
         # sniffer.stop()

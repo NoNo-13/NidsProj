@@ -8,13 +8,13 @@ class Client():
         self.socket = None  # Socket
         self.HEADER_SIZE = 1024
         self.FORMAT = 'utf-8'
-        self.Address_server = (self.IP, self.port)
+        self.server = (self.IP, self.port)
 
     def start_client(self):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
         try:
-            self.socket.connect(self.Address_server)   
+            self.socket.connect(self.server)
         except socket.error as e:
             str(e)
       
@@ -24,10 +24,15 @@ class Client():
         scanner = Scanner()
         filename = "RulesToUse.txt"
         scanner.main_Scanner(filename)
-
         connected = True
         while connected:
-            pass
+            if len(scanner.cache) >= 1:
+                self.send_update('found', {'packet': scanner.cache})
+                scanner.cache.clear()
+            #need to do client commands (maybe with thread for scanner and one for commands)
+
+    def send_update(self, cmd: str, params: dict):
+        self.socket.send(json.dumps({'cmd': cmd, **params}).encode())
 
 
 
