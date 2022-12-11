@@ -229,7 +229,7 @@ def packetString(pkt):
     if (IP in pkt):
         out += ipString(pkt[IP])
     elif (IPv6 in pkt):
-        # TODO
+        #need to do
         pass
     if (TCP in pkt):
         out += tcpString(pkt[TCP])

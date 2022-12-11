@@ -11,7 +11,7 @@ class TCPServer:
         self.socket = None  # Socket
         self.HEADER_SIZE = 1024
         self.FORMAT = 'utf-8'
-        self.Address_server = [(self.IP, self.port)]
+        self.Address_server = (self.IP, self.port)
 
     def start_server(self):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -36,22 +36,11 @@ class TCPServer:
         client_socket.close()
 
     def handle_update(self, data, addr):
-        pass
+        if data["cmd"] == "found":
+            pass
 
 
-        self.socket.sendto(str.encode(self.make_pos_str(self.pos[player])), addr)
-        reply = ""
-        self.pos[player] = data
-        player = 0
-        for addres in self.Addresses:
-            if addres[0] != addr[0]:
-                reply += self.make_pos_str(self.pos[player])
-            player += 1
-        print("Received", data)
-        if reply != "":
-            print("sending: ", reply)
-            self.socket.sendto(str.encode(self.make_pos_str(reply)), addr)
-        print("lost connection")
+
 
     def wait_for_client(self):
         while True:
@@ -64,8 +53,6 @@ def main_Server():
     server = TCPServer()
     server.start_server()
     server.wait_for_client()
-    receive_thread = threading.Thread(target=server.wait_for_client)
-    receive_thread.start()
 
 if __name__ == '__main__':
     main_Server()

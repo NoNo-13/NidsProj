@@ -11,39 +11,37 @@ BLUE = '\033[34m'
 GREEN = '\033[32m'
 ENDC = '\033[0m'
 
+class Scanner():
+    def __init__(self):
+        self.ruleList = list()
+    def main_Scanner(self, filename):
+        """Read the rule file and start listening."""
 
-def main_Scanner(filename):
-    """Read the rule file and start listening."""
+        now = datetime.now()
+        logging.basicConfig(filename="NidsProj " + str(now) + '.log', level=logging.INFO)
 
-    #now = datetime.now()
-    #logging.basicConfig(filename="Simple-NIDS " + str(now) + '.log', level=logging.INFO)
+        print("NIDS started.")
+        # Read the rule file
+        print("Reading rule file...")
 
-    print("Simple-NIDS started.")
-    # Read the rule file
-    print("Reading rule file...")
-    global ruleList
-    ruleList, errorCount = RuleFileReader.read(filename)
-    print("Finished reading rule file.")
+        self.ruleList, errorCount = RuleFileReader.read(filename)
+        print("Finished reading rule file.")
 
-    if (errorCount == 0):
-        print("All (" + str(len(ruleList)) + ") rules have been correctly read.")
-    else:
-        print(str(len(ruleList)) + " rules have been correctly read.")
-        print(str(errorCount) + " rules have errors and could not be read.")
+        if (errorCount == 0):
+            print("All (" + str(len(self.ruleList)) + ") rules have been correctly read.")
+        else:
+            print(str(len(self.ruleList)) + " rules have been correctly read.")
+            print(str(errorCount) + " rules have errors and could not be read.")
 
-    # Begin sniffing
-    sniffer = Sniffer(ruleList)
-    sniffer.run()
+        # Begin sniffing
+        sniffer = Sniffer(self.ruleList)
+        sniffer.run()
 
-    # sniffer.stop()
-    # print "Simple-NIDS stopped."
-
-
-
-
+        # sniffer.stop()
+        # print "Simple-NIDS stopped."
 
 
 if __name__ == '__main__':
-    ruleList = list()
+    scanner = Scanner()
     filename = "RulesToUse.txt"
-    main_Scanner(filename)
+    scanner.main_Scanner(filename)
