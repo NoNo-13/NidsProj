@@ -12,6 +12,7 @@ class TCPServer:
         self.HEADER_SIZE = 1024
         self.FORMAT = 'utf-8'
         self.Address_server = (self.IP, self.port)
+        self.founds = list() #It will be database with Mysql
 
     def start_server(self):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -37,7 +38,10 @@ class TCPServer:
 
     def handle_update(self, data, addr):
         if data["cmd"] == "found":
-            pass
+            try:
+                self.founds.append(data["packet"])
+            except:
+                print("Wrong data: packet")
 
 
 

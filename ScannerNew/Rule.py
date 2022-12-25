@@ -97,7 +97,6 @@ class Rule:
 
     def __repr__(self):
         """Returns the string representing the Rule"""
-        # simply use initialization string
         return self.string
 
     def match(self, pkt):

@@ -30,14 +30,11 @@ class Sniffer(Thread):
             matched = rule.match(pkt)
             if (matched):
                 self.cache.append(pkt)
-                self.send_update('found', {'packet': pkt})
-                # logMessage = rule.getMatchedMessage(pkt)
-                # logging.warning(logMessage)
+                logMessage = rule.getMatchedMessage(pkt)
+                logging.warning(logMessage)
 
                 print(rule.getMatchedPrintMessage(pkt))
 
-    def send_update(self, cmd: str, params: dict):
-        self.socket.send(json.dumps({'cmd': cmd, **params}).encode())
 
     def run(self):
         print("Sniffing started.")
