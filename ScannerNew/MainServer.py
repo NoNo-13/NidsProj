@@ -12,11 +12,12 @@ class TCPServer:
         self.HEADER_SIZE = 1024
         self.FORMAT = 'utf-8'
         self.Address_server = (self.IP, self.port)
-        self.founds = list() #It will be database with Mysql
+
+        self.founds = {} #It will be database with Mysql
+        self.addresses = list() #all the addresses that connect to server
 
     def start_server(self):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
         try:
             self.socket.bind((self.IP, self.port))
         except socket.error as e:
@@ -38,22 +39,22 @@ class TCPServer:
 
     def handle_update(self, data, addr):
         if data["cmd"] == "found":
-            try:
-                self.founds.append(data["packet"])
-            except:
-                print("Wrong data: packet")
+            if addr in self.founds:
+                self.founds[addr].append(data["packet"])
 
-
+    def new_connect(self, addr):
+        self.addresses.append(addr)
+        self.founds[addr] = list()
 
 
     def wait_for_client(self):
         while True:
             (client_socket, addr) = self.socket.accept()
+            self.new_connect(addr)
             client_thread = threading.Thread(target=self.threaded_client, args=(client_socket, addr))
             client_thread.start()
 
 def main_Server():
-
     server = TCPServer()
     server.start_server()
     server.wait_for_client()
