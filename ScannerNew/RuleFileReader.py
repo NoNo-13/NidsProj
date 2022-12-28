@@ -20,5 +20,4 @@ def read(filename):
             except ValueError as err:
                 ruleErrorCount += 1
                 print(err)
-
     return l, ruleErrorCount
