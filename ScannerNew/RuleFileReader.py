@@ -12,9 +12,8 @@ def read(filename):
     l = list()
     with open (filename, 'r') as f:
         ruleErrorCount = 0
-        for  line in f:
+        for line in f:
             #rule = parseRule(line)
-
             try:
                 rule = Rule(line)
                 l.append(rule)

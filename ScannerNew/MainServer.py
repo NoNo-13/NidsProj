@@ -49,10 +49,13 @@ class TCPServer:
 
     def wait_for_client(self):
         while True:
-            (client_socket, addr) = self.socket.accept()
-            self.new_connect(addr)
-            client_thread = threading.Thread(target=self.threaded_client, args=(client_socket, addr))
-            client_thread.start()
+            try:
+                (client_socket, addr) = self.socket.accept()
+                self.new_connect(addr)
+                client_thread = threading.Thread(target=self.threaded_client, args=(client_socket, addr))
+                client_thread.start()
+            except:
+                print("Couldn't accept Client")
 
 def main_Server():
     server = TCPServer()

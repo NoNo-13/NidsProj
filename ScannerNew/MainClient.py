@@ -14,12 +14,10 @@ class Client():
 
     def start_client(self):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
         try:
             self.socket.connect(self.server)
         except socket.error as e:
             str(e)
-
         print("Client connected")
 
     def client_talk(self):
