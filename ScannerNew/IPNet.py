@@ -1,14 +1,24 @@
 from ipaddress import *
+import socket
+
+
 
 class IPNet:
     """An IP network with CIDR block. Represents a set of IPs."""
-
+    hostname = socket.gethostname()
+    IPAddr = socket.gethostbyname(hostname)
     def __init__(self, string):
         """Contruct a IPNetwork from a string like 'a.b.c.d/e', 'a.b.c.d' or 'any'."""
-
+        hostname = socket.gethostname()
+        self.IPAddr = socket.gethostbyname(hostname)
         try:
+
             if (string.rstrip() == "any"):
                 self.ipn = ip_network(u'0.0.0.0/0')
+            elif (string.rstrip() == "$HOME_NET"):
+                self.ipn = ip_network(self.IPAddr)
+            elif (string.rstrip() == "$EXTERNAL_NET"):
+                self.ipn = ip_network("exter")
             else:
                 strs = string.split("/")
                 if (len(strs) >= 2):
@@ -24,7 +34,8 @@ class IPNet:
 
     def contains(self, ip):
         """Check if input ip is in the IPNetwork, return True iff yes."""
-
+        if (self.ipn == "exter"):
+            return (ip not in self.IPAddr)
         return (ip in self.ipn)
 
     def __repr__(self):

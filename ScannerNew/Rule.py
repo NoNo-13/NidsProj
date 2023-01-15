@@ -1,6 +1,9 @@
 from ipaddress import *
-from scapy.all import *
-from scapy.layers.inet import TCP, UDP, IP
+
+from scapy import *
+from scapy.layers.dns import DNS
+from scapy.layers.inet import TCP, UDP, IP, ICMP
+from scapy.layers.tls.record import TLS
 
 from Utils import *
 from Action import *
@@ -135,6 +138,14 @@ class Rule:
             # check payload to determine if this is a HTTP packet
             if (isHTTP(pkt)):
                 f = True
+        elif (self.protocol == Protocol.IP and IP in pkt):
+            f = True
+        elif (self.protocol == Protocol.DNS and DNS in pkt):
+            f = True
+        elif (self.protocol == Protocol.TLS and TLS in pkt):
+            f = True
+        elif (self.protocol == Protocol.ICMP and ICMP in pkt):
+            f = True
         return f
 
     def checkIps(self, pkt):
