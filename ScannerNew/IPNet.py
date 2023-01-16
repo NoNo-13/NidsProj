@@ -18,7 +18,7 @@ class IPNet:
             elif (string.rstrip() == "$HOME_NET"):
                 self.ipn = ip_network(self.IPAddr)
             elif (string.rstrip() == "$EXTERNAL_NET"):
-                self.ipn = ip_network("exter")
+                self.ipn = "exter"
             else:
                 strs = string.split("/")
                 if (len(strs) >= 2):

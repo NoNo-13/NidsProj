@@ -10,6 +10,9 @@ class Protocol(Enum):
     DNS = 5
     TLS = 6
     ICMP = 7
+    FTP = 8
+    SMB = 9
+    SMTP = 10
 
 def protocol(istr):
     """Return Protocol corresponding to the string."""
@@ -28,5 +31,11 @@ def protocol(istr):
         return Protocol.TLS
     elif(str == "icmp"):
         return Protocol.ICMP
+    elif(str == "ftp"):
+        return Protocol.FTP
+    elif(str == "smb"):
+        return Protocol.SMB
+    elif(str == "smtp"):
+        return Protocol.SMTP
     else:
         raise ValueError("Invalid rule : incorrect protocol : '" + istr + "'.")

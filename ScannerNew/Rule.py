@@ -1,9 +1,12 @@
+from ftplib import FTP
 from ipaddress import *
+from smtplib import SMTP
 
 from scapy import *
 from scapy.layers.dns import DNS
 from scapy.layers.inet import TCP, UDP, IP, ICMP
 from scapy.layers.tls.record import TLS
+from scapy.layers.smb import *
 
 from Utils import *
 from Action import *
@@ -60,6 +63,7 @@ class Rule:
                 # options may be present
                 opts = strs[1].split(';')
                 for opt in opts:
+                    print(opt)
                     kv = opt.split(':',1)
                     if (len(kv) >= 2):
                         option = kv[0].strip()
@@ -145,6 +149,12 @@ class Rule:
         elif (self.protocol == Protocol.TLS and TLS in pkt):
             f = True
         elif (self.protocol == Protocol.ICMP and ICMP in pkt):
+            f = True
+        elif (self.protocol == Protocol.FTP and FTP in pkt):
+            f = True
+        elif (self.protocol == Protocol.SMB and SMB in pkt):
+            f = True
+        elif (self.protocol == Protocol.SMTP and SMTP in pkt):
             f = True
         return f
 
