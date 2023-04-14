@@ -1,23 +1,26 @@
 """Functions for reading a file of rules."""
-
-from Action import *
-from Protocol import *
 from IPNet import *
 from Ports import *
-from Rule import *
+from parsuricata import parse_rules
 
 def read(filename):
     """Read the input file for rules and return the list of rules and the number of line errors."""
 
-    l = list()
-    with open (filename, 'r') as f:
-        ruleErrorCount = 0
-        for line in f:
-            #rule = parseRule(line)
-            try:
-                rule = Rule(line)
-                l.append(rule)
-            except ValueError as err:
-                ruleErrorCount += 1
-                print(err)
-    return l, ruleErrorCount
+    text_file = open (filename, 'r')
+    rules = parse_rules(text_file.read())
+    for rule in rules:
+        PrepareRule(rule)
+
+    text_file.close()
+    return rules
+
+def PrepareRule(rule):
+    """
+        There are several options that the IP and Port will look like in each rule
+        exp- any, [x, y, z] etc
+    """
+    rule.src = IPNet(rule.src)
+    rule.src_port = Ports(rule.src_port)
+    rule.dst = IPNet(rule.dst)
+    rule.dst_port = Ports(rule.dst_port)
+

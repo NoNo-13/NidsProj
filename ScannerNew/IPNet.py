@@ -12,14 +12,14 @@ class IPNet:
         hostname = socket.gethostname()
         self.IPAddr = socket.gethostbyname(hostname)
         try:
-
-            if (string.rstrip() == "any"):
+            if (string == "any"):
                 self.ipn = ip_network(u'0.0.0.0/0')
-            elif (string.rstrip() == "$HOME_NET"):
+            elif (str(string) == "$HOME_NET"):
                 self.ipn = ip_network(self.IPAddr)
-            elif (string.rstrip() == "$EXTERNAL_NET"):
+            elif (str(string) == "$EXTERNAL_NET"):
                 self.ipn = "exter"
             else:
+                print(string)
                 strs = string.split("/")
                 if (len(strs) >= 2):
                     # CIDR Block
@@ -35,7 +35,7 @@ class IPNet:
     def contains(self, ip):
         """Check if input ip is in the IPNetwork, return True iff yes."""
         if (self.ipn == "exter"):
-            return (ip not in self.IPAddr)
+            return (ip not in ip_network(self.IPAddr))
         return (ip in self.ipn)
 
     def __repr__(self):

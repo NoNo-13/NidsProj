@@ -1,15 +1,18 @@
 from enum import Enum
 from scapy.all import *
-from scapy.layers.inet import TCP, IP, UDP
 import re
+from ipaddress import *
 
+from scapy.layers.inet import TCP, IP, UDP
 from scapy.layers.inet6 import IPv6
+
 
 HTTPcommands = ["GET", "HEAD", "POST", "PUT", "DELETE", "TRACE", "OPTIONS", "CONNECT", "PATCH"]
 
 
 def isHTTP(pkt):
     if (TCP in pkt and pkt[TCP].payload):
+
         data = str(pkt[TCP].payload)
         words = data.split('/')
         if(len(words) >= 1 and words[0].rstrip() == "HTTP"):
@@ -50,14 +53,16 @@ def ipString(ip):
 
 def matchedIpString(ip, rule):
     """Construct the human-readable string corresponding to the matched IP header, with matched fields in red."""
-
+    ListAllIn = list()
+    for opt in rule.options:
+        ListAllIn.append(opt.keyword)
     out = "[IP HEADER]" + "\n"
     out += "\t Version: " + str(ip.version) + "\n"
-    if (hasattr(rule, "len")):
+    if ("len" in ListAllIn):
         out += RED + "\t IHL: " + str(ip.ihl * 4) + " bytes" + ENDC + "\n"
     else:
         out += "\t IHL: " + str(ip.ihl * 4) + " bytes" + "\n"
-    if (hasattr(rule, "tos")):
+    if ("tos" in ListAllIn):
         out += RED + "\t ToS: " + str(ip.tos) + ENDC + "\n"
     else:
         out += "\t ToS: " + str(ip.tos) + "\n"
@@ -67,7 +72,7 @@ def matchedIpString(ip, rule):
     out += "\t Flags: " + str(ip.flags) + "\n"
 
 
-    if (hasattr(rule, "offset")):
+    if ("offset" in ListAllIn):
         out += RED + "\t Fragment Offset: " + str(ip.frag) + ENDC + "\n"
     else:
         out += "\t Fragment Offset: " + str(ip.frag) + "\n"
@@ -77,12 +82,18 @@ def matchedIpString(ip, rule):
     out += "\t Header Checksum: " + str(ip.chksum) + "\n"
 
     # If the IP was specified uniquely, out += red
-    if (rule.srcIps.ipn.num_addresses == 1):
+    if(rule.src.ipn == "exter"):
+        if(ip_network(u'0.0.0.0/0').num_addresses == 1):
+            out += RED + "\t Source: " + str(ip.src) + ENDC + "\n"
+    elif (rule.src.ipn.num_addresses == 1):
         out += RED + "\t Source: " + str(ip.src) + ENDC + "\n"
     else:
         out += "\t Source: " + str(ip.src) + "\n"
 
-    if (rule.dstIps.ipn.num_addresses == 1):
+    if (rule.dst.ipn == "exter"):
+        if (ip_network(u'0.0.0.0/0').num_addresses == 1):
+            out += RED + "\t Destination: " + str(ip.dst) + ENDC + "\n"
+    elif (rule.dst.ipn.num_addresses == 1):
         out += RED + "\t Destination: " + str(ip.dst) + ENDC + "\n"
     else:
         out += "\t Destination: " + str(ip.dst) + "\n"
@@ -112,27 +123,29 @@ def tcpString(tcp):
 
 def matchedTcpString(tcp, rule):
     """Construct the human-readable string corresponding to the matched TCP header, with matched fields in red."""
-
+    ListAllIn = list()
+    for opt in rule.options:
+        ListAllIn.append(opt.keyword)
     out = "[TCP Header]" + "\n"
-    if (hasattr(rule.srcPorts, "listPorts") and len(rule.srcPorts.listPorts) == 1):
+    if (hasattr(rule.src_port, "listPorts") and len(rule.src_port.listPorts) == 1):
         out += RED + "\t Source Port: " + str(tcp.sport) + ENDC + "\n"
     else:
         out += "\t Source Port: " + str(tcp.sport) + "\n"
-    if (hasattr(rule.dstPorts, "listPorts") and len(rule.dstPorts.listPorts) == 1):
+    if (hasattr(rule.dst_port, "listPorts") and len(rule.dst_port.listPorts) == 1):
         out += RED + "\t Destination Port: " + str(tcp.dport) + ENDC + "\n"
     else:
         out += "\t Destination Port: " + str(tcp.dport) + "\n"
-    if (hasattr(rule, "seq")):
+    if ("seq" in ListAllIn):
         out += RED + "\t Sequence Number: " + str(tcp.seq) + ENDC + "\n"
     else:
         out += "\t Sequence Number: " + str(tcp.seq) + "\n"
-    if (hasattr(rule, "ack")):
+    if ("ack" in ListAllIn):
         out += RED + "\t Acknowledgment Number: " + str(tcp.ack) + ENDC + "\n"
     else:
         out += "\t Acknowledgment Number: " + str(tcp.ack) + "\n"
     out += "\t Data Offset: " + str(tcp.dataofs) + "\n"
     out += "\t Reserved: " + str(tcp.reserved) + "\n"
-    if (hasattr(rule,"flags")):
+    if ("flags" in ListAllIn):
         out += RED + "\t Flags:" + tcp.underlayer.sprintf("%TCP.flags%") + ENDC + "\n"
     else:
         out += "\t Flags:" + tcp.underlayer.sprintf("%TCP.flags%") + "\n"
@@ -158,11 +171,11 @@ def matchedUdpString(udp, rule):
     """Construct the human-readable string corresponding to the UDP header, with matched fields in red."""
 
     out = "[UDP Header]" + "\n"
-    if (hasattr(rule.srcPorts, "listPorts") and len(rule.srcPorts.listPorts) == 1):
+    if (hasattr(rule.src_port, "listPorts") and len(rule.src_port.listPorts) == 1):
         out += RED + "\t Source Port: " + str(udp.sport) + ENDC + "\n"
     else:
         out += "\t Source Port: " + str(udp.sport) + "\n"
-    if (hasattr(rule.dstPorts, "listPorts") and len(rule.dstPorts.listPorts) == 1):
+    if (hasattr(rule.dst_port, "listPorts") and len(rule.dst_port.listPorts) == 1):
         out += RED + "\t Destination Port: " + str(udp.dport) + ENDC + "\n"
     else:
         out += "\t Destination Port: " + str(udp.dport) + "\n"
@@ -186,16 +199,22 @@ def payloadString(pkt):
 
 def matchedTcpPayloadString(tcp, rule):
     """Construct the human-readable string corresponding to the tcp payload, with matched fields in red."""
+    ListAllIn = list()
+    cont = None
+    for opt in rule.options:
+        ListAllIn.append(opt.keyword)
+        if(opt.keyword == "content"):
+            cont = opt.settings #I need the content for later
 
     out = "[TCP Payload]" + "\n"
 
     if (hasattr(rule, "http_request")):
         out += RED + "HTTP Request: " + str(rule.http_request) + ENDC + "\n"
 
-    if (hasattr(rule, "content") and tcp.payload):
+    if ("content" in ListAllIn and tcp.payload):
         data = str(tcp.payload)
         # add red color when content found in the string
-        data = re.sub(rule.content, RED + rule.content + ENDC, data)
+        data = re.sub(cont, RED + cont + ENDC, data)
         lines = data.splitlines()
         s = ""
         for line in lines:
@@ -207,13 +226,19 @@ def matchedTcpPayloadString(tcp, rule):
 
 def matchedUdpPayloadString(udp, rule):
     """Construct the human-readable string corresponding to the udp payload, with matched fields in red."""
+    ListAllIn = list()
+    cont = None
+    for opt in rule.options:
+        ListAllIn.append(opt.keyword)
+        if (opt.keyword == "content"):
+            cont = opt.settings  # I need the content for later
 
     out = "[UDP Payload]" + "\n"
 
-    if (hasattr(rule, "content") and udp.payload):
+    if ("content" in ListAllIn and udp.payload):
         data = str(udp.payload)
         # add red color when content found in the string
-        data = re.sub(rule.content, RED + rule.content + ENDC, data)
+        data = re.sub(cont, RED + cont + ENDC, data)
         lines = data.splitlines()
         s = ""
         for line in lines:
@@ -234,7 +259,7 @@ def packetString(pkt):
     if (TCP in pkt):
         out += tcpString(pkt[TCP])
         out += "[TCP Payload]" + "\n"
-        out+= payloadString(pkt[TCP])
+        out += payloadString(pkt[TCP])
     elif (UDP in pkt):
         out += udpString(pkt[UDP])
         out += "[UDP Payload]" + "\n"
