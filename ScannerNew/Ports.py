@@ -58,6 +58,7 @@ class Ports:
                 return self.lowPort <= port and port <= self.highPort
         elif (self.type == "list"):
             return port in self.listPorts
+        return False
 
     def __repr__(self):
         """ String representation of the Ports : 'any', 'a:b' or 'a,b,c...' """

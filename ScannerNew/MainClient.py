@@ -47,11 +47,12 @@ class Client:
                         self.send_update("showDb")
                     else:
                         self.send_update_par("showDb", {"msg": inputCli})
+                    data = self.socket.recv()
+                    data = self.decryption_data(data)
+                    print(data)
             except KeyboardInterrupt:
                 exit_flag = True
-            data = self.socket.recv()
-            data = self.decryption_data(data)
-            print(data)
+
 
 
     def client_talk(self):

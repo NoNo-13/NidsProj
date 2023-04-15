@@ -5,8 +5,6 @@ import socket
 
 class IPNet:
     """An IP network with CIDR block. Represents a set of IPs."""
-    hostname = socket.gethostname()
-    IPAddr = socket.gethostbyname(hostname)
     def __init__(self, string):
         """Contruct a IPNetwork from a string like 'a.b.c.d/e', 'a.b.c.d' or 'any'."""
         hostname = socket.gethostname()

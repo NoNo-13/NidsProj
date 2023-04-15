@@ -28,6 +28,16 @@ class Sniffer(Thread):
         return self.stopped
 
     def inPacket(self, pkt):
+        hostname = socket.gethostname()
+        IPAddr = socket.gethostbyname(hostname)
+        src = '1.2.3.4'
+        dst = IPAddr
+        a = IP(ihl=5, tos=0, src=src, dst=dst)
+        b = TCP(sport=1234, dport=25, flags='A', window=8192, dataofs=8)
+        noop = b'\x90' * 11
+        c = Raw(load=noop)
+        pkt = a / b / c
+        print(pkt.summary())
         """Directive for each received packet."""
         for rule in self.ruleList:
             # Check all rules
@@ -41,12 +51,15 @@ class Sniffer(Thread):
                     self.cache.append([str(rule.options[0].settings), "0",str(pkt)]) #msg, packet
                 logMessage = self.getMatchedMessage(pkt, rule)
                 logging.warning(logMessage)
-                print(packetStr)
+                with open("log.txt", "a") as f:
+                    # Write the message to the file
+                    f.write(packetStr)
+                print("\nWrite your command: \n")
                 return
 
     def run(self):
         print("Sniffing started.")
-        sniff(prn=self.inPacket, filter="", store=0, stop_filter=self.stopfilter)
+        sniff(prn=self.inPacket, filter="",stop_filter=self.stopfilter) #store=0 increasw buffer size to capture more at once
 
     def match(self, pkt, rule):
         """
@@ -193,12 +206,27 @@ class Sniffer(Thread):
 
             if (op.keyword == "content"):
                 payload = None
+                byte_sequence = op.settings
+                if("|" in op.settings):
+                    # Define a regex pattern to match "|hexadecimal string|"
+                    pattern = re.compile(r'\|[0-9a-fA-F ]+\|')
+
+                    # Find all matches of the pattern in the string
+                    matches = re.findall(pattern,  byte_sequence)
+
+                    # Replace each match with the equivalent byte representation
+                    for match in matches:
+                        hex_string = match.strip('|')
+                        hex_bytes = bytes.fromhex(hex_string)
+                        byte_string = ''.join('\\x{:02x}'.format(x) for x in hex_bytes)
+                        byte_sequence = byte_sequence.replace(match, byte_string)
+
                 if (TCP in pkt):
                     payload = pkt[TCP].payload
                 elif (UDP in pkt):
                     payload = pkt[UDP].payload
                 if (payload):
-                    if (op.settings not in str(payload)):
+                    if (str(byte_sequence) not in str(payload)):
                         return False
                 else:
                     return False
@@ -206,26 +234,20 @@ class Sniffer(Thread):
 
     def getMatchedMessage(self, pkt, rule):
         """Return the message to be logged when the packet triggered the rule."""
-
         msg = ""
         if (rule.action == "alert"):
             msg += " ALERT "
+        msg += "Rule matched name: "
         msg += rule.options[0].settings + "\n"
-
-        msg += "Rule matched :\n" + str(rule) + "\n"
         msg += "By packet :\n" + packetString(pkt) + "\n"
 
         return msg
 
     def getMatchedPrintMessage(self, pkt, rule):
         """Return the message to be printed in the console when the packet triggered the rule."""
-        msg = ""
-        if (rule.action == "alert"):
-            msg += RED + "ALERT "
-        msg += rule.options[0].settings
-        msg += "\n" + ENDC
+        msg = "Rule matched name: "
+        msg += rule.options[0].settings + "\n"
 
-        msg += "Rule matched :\n" + str(rule) + "\n"
         msg += "By packet :\n" + matchedPacketString(pkt, rule) + "\n"
 
         return msg

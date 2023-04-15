@@ -10,7 +10,6 @@ def read(filename):
     rules = parse_rules(text_file.read())
     for rule in rules:
         PrepareRule(rule)
-
     text_file.close()
     return rules
 
@@ -23,4 +22,7 @@ def PrepareRule(rule):
     rule.src_port = Ports(rule.src_port)
     rule.dst = IPNet(rule.dst)
     rule.dst_port = Ports(rule.dst_port)
+
+
+
 
