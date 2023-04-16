@@ -28,16 +28,7 @@ class Sniffer(Thread):
         return self.stopped
 
     def inPacket(self, pkt):
-        hostname = socket.gethostname()
-        IPAddr = socket.gethostbyname(hostname)
-        src = '1.2.3.4'
-        dst = IPAddr
-        a = IP(ihl=5, tos=0, src=src, dst=dst)
-        b = TCP(sport=1234, dport=25, flags='A', window=8192, dataofs=8)
-        noop = b'\x90' * 11
-        c = Raw(load=noop)
-        pkt = a / b / c
-        print(pkt.summary())
+
         """Directive for each received packet."""
         for rule in self.ruleList:
             # Check all rules
@@ -59,7 +50,7 @@ class Sniffer(Thread):
 
     def run(self):
         print("Sniffing started.")
-        sniff(prn=self.inPacket, filter="",stop_filter=self.stopfilter) #store=0 increasw buffer size to capture more at once
+        sniff(prn=self.inPacket, filter="", stop_filter=self.stopfilter) #store=0 increase buffer size to capture more at once
 
     def match(self, pkt, rule):
         """

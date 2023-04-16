@@ -1,7 +1,6 @@
 alert tcp $EXTERNAL_NET any -> $HOME_NET 25 (msg:"EXPLOIT sniffit overflow"; flags:"A"; content:"|90 90 90 90 90 90 90 90 90 90 90|";)
 alert dns any any -> any any (msg:"TThreatHunter Rule - Abused TLD .tk in DNS"; flow:established; dns_query; content:".tk"; endswith; threshold:type limit, track by_src, seconds 60, count 1; classtype:bad-unknown; sid:2610020; rev:1;)
 alert dns any any -> any any (msg:"TThreatHunter Rule - Abused TLD .ml in DNS"; flow:established; dns_query; content:".ml"; endswith; threshold:type limit, track by_src, seconds 60, count 1; classtype:bad-unknown; sid:2610021; rev:1;)
-alert ip any any -> any any (msg:"TThreatHunter Rule - sameip Keyword Test Rule"; flow:established,to_server; sameip; threshold:type limit, track by_src, seconds 60, count 1; classtype:bad-unknown; sid:2610152; rev:1;)
 alert http any any -> any any (msg:"TThreatHunter Rule - Abused TLD .click in HTTP Host"; flow:established; content:".click"; http_host; endswith; threshold:type limit, track by_src, seconds 60, count 1; classtype:bad-unknown; sid:2610051; rev:1;)
 alert dns any any -> any any (msg:"TThreatHunter Rule - Abused TLD .ga in DNS"; flow:established; dns_query; content:".ga"; endswith; threshold:type limit, track by_src, seconds 60, count 1; classtype:bad-unknown; sid:2610022; rev:1;)
 alert dns any any -> any any (msg:"TThreatHunter Rule - Abused TLD .cf in DNS"; flow:established; dns_query; content:".cf"; endswith; threshold:type limit, track by_src, seconds 60, count 1; classtype:bad-unknown; sid:2610023; rev:1;)

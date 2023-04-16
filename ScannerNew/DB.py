@@ -10,6 +10,8 @@ import parsuricata
 #cursor.execute("SELECT msg FROM packets")- get all the msg data
 #cursor.execute("CREATE TABLE XXX")- creating new table called XXX
 #cursor.execute(sql, values)- adding
+#cursor.execute("DELETE FROM packets WHERE condition") - delete
+
 
 #TABLE packets(
 
@@ -28,7 +30,7 @@ class DB:
         try:
             self.cursor.execute('CREATE DATABASE IF NOT EXISTS malicious_packets')
             self.cursor.execute('USE malicious_packets')
-            self.cursor.execute('CREATE TABLE IF NOT EXISTS packets(msg VARCHAR(255), src VARCHAR(255), pkt VARCHAR(4096))')
+            self.cursor.execute('CREATE TABLE IF NOT EXISTS packets(id INT AUTO_INCREMENT PRIMARY KEY, msg VARCHAR(255), src VARCHAR(255), pkt VARCHAR(4096))')
         except Exception:
             logging.exception('db exception')
             self.close()
@@ -53,13 +55,17 @@ class DB:
     def showData(self, data):
         if "msg" in data:
             self.cursor.execute("SELECT id, msg FROM packets WHERE msg =  %(msg)s", {'msg': data["msg"]})
+        elif "id" in data:
+            self.cursor.execute("SELECT * FROM packets WHERE id =  %(id)s", {'id': data["id"]})
         else:
             self.cursor.execute("SELECT id, msg FROM packets")
-        str = ""
+        string = ""
         for each in self.cursor:
             for col in each:
                 if(col != None):
-                    str += col + ", "
-            str += "\n"
-        return str
+                    string += str(col) + ", "
+                else:
+                    string += "None, "
+            string += "\n"
+        return string
 

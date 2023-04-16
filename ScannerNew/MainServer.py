@@ -12,7 +12,7 @@ class TCPServer:
         self.IP = "0.0.0.0" #socket.gethostbyname(socket.gethostname())  Host address
         self.port = 8820  # Host port
         self.socket = None  # Socket
-        self.HEADER_SIZE = 4096
+        self.HEADER_SIZE = 1024
         self.FORMAT = 'utf-8'
         self.Address_server = (self.IP, self.port)
         self.database = DB()
@@ -43,14 +43,26 @@ class TCPServer:
         return decrypted_data
     def send_data(self, data, client_socket):
         encrypted_data = self.keyEnc.encrypt(bytes(data, 'utf-'))
-        client_socket.send(encrypted_data)
+        chunks = [encrypted_data[i:i + self.HEADER_SIZE] for i in range(0, len(encrypted_data), self.HEADER_SIZE)]
+        # Send each chunk
+        client_socket.send(str(len(chunks)).zfill(4).encode())
+        for chunk in chunks:
+            client_socket.send(chunk)
 
     def threaded_client(self, client_socket, addr):
         print("New Connection")
         client_socket.send(self.key)
         connected = True
         while connected:
-            data = client_socket.recv(self.HEADER_SIZE)
+
+            data = bytes()
+            times = client_socket.recv(4).decode()
+            times = int(times)
+            i = 0
+            while i < times:
+                data += client_socket.recv(self.HEADER_SIZE)
+                i += 1
+
             data = self.decryption_data(data)
             data = json.loads(data)
             if data["cmd"] == "disconnect":
@@ -59,6 +71,11 @@ class TCPServer:
                 self.database.store_packet(data)
             if data["cmd"] == "showDb":
                 dbData = self.database.showData(data)
+                self.send_data(dbData, client_socket)
+            if data["cmd"] == "getFull":
+                dbData = self.database.showData(data)
+                if (dbData == ""):
+                    dbData = "Id not found"
                 self.send_data(dbData, client_socket)
 
 
