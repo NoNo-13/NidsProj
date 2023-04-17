@@ -26,8 +26,8 @@ def isHTTP(pkt):
     else:
         return False
 
-RED = '\033[91m'
-ENDC = '\033[0m'
+RED = '\033'
+ENDC = '\033'
 URG = 0x20
 
 
@@ -59,11 +59,11 @@ def matchedIpString(ip, rule):
     out = "[IP HEADER]" + "\n"
     out += "\t Version: " + str(ip.version) + "\n"
     if ("len" in ListAllIn):
-        out += RED + "\t IHL: " + str(ip.ihl * 4) + " bytes" + ENDC + "\n"
+        out += RED + "\t IHL: " + str(ip.ihl * 4) + " bytes " + ENDC + "\n"
     else:
         out += "\t IHL: " + str(ip.ihl * 4) + " bytes" + "\n"
     if ("tos" in ListAllIn):
-        out += RED + "\t ToS: " + str(ip.tos) + ENDC + "\n"
+        out += RED + "\t ToS: " + str(ip.tos) + " " + ENDC + "\n"
     else:
         out += "\t ToS: " + str(ip.tos) + "\n"
 
@@ -73,7 +73,7 @@ def matchedIpString(ip, rule):
 
 
     if ("offset" in ListAllIn):
-        out += RED + "\t Fragment Offset: " + str(ip.frag) + ENDC + "\n"
+        out += RED + "\t Fragment Offset: " + str(ip.frag) + " " + ENDC + "\n"
     else:
         out += "\t Fragment Offset: " + str(ip.frag) + "\n"
 
@@ -84,17 +84,17 @@ def matchedIpString(ip, rule):
     # If the IP was specified uniquely, out += red
     if(rule.src.ipn == "exter"):
         if(ip_network(u'0.0.0.0/0').num_addresses == 1):
-            out += RED + "\t Source: " + str(ip.src) + ENDC + "\n"
+            out += RED + "\t Source: " + str(ip.src) + " " + ENDC + "\n"
     elif (rule.src.ipn.num_addresses == 1):
-        out += RED + "\t Source: " + str(ip.src) + ENDC + "\n"
+        out += RED + "\t Source: " + str(ip.src) + " " + ENDC + "\n"
     else:
         out += "\t Source: " + str(ip.src) + "\n"
 
     if (rule.dst.ipn == "exter"):
         if (ip_network(u'0.0.0.0/0').num_addresses == 1):
-            out += RED + "\t Destination: " + str(ip.dst) + ENDC + "\n"
+            out += RED + "\t Destination: " + str(ip.dst) + " " + ENDC + "\n"
     elif (rule.dst.ipn.num_addresses == 1):
-        out += RED + "\t Destination: " + str(ip.dst) + ENDC + "\n"
+        out += RED + "\t Destination: " + str(ip.dst) + " " + ENDC + "\n"
     else:
         out += "\t Destination: " + str(ip.dst) + "\n"
 
@@ -128,25 +128,25 @@ def matchedTcpString(tcp, rule):
         ListAllIn.append(opt.keyword)
     out = "[TCP Header]" + "\n"
     if (hasattr(rule.src_port, "listPorts") and len(rule.src_port.listPorts) == 1):
-        out += RED + "\t Source Port: " + str(tcp.sport) + ENDC + "\n"
+        out += RED + "\t Source Port: " + str(tcp.sport) + " " + ENDC + "\n"
     else:
         out += "\t Source Port: " + str(tcp.sport) + "\n"
     if (hasattr(rule.dst_port, "listPorts") and len(rule.dst_port.listPorts) == 1):
-        out += RED + "\t Destination Port: " + str(tcp.dport) + ENDC + "\n"
+        out += RED + "\t Destination Port: " + str(tcp.dport) + " " + ENDC + "\n"
     else:
         out += "\t Destination Port: " + str(tcp.dport) + "\n"
     if ("seq" in ListAllIn):
-        out += RED + "\t Sequence Number: " + str(tcp.seq) + ENDC + "\n"
+        out += RED + "\t Sequence Number: " + str(tcp.seq) + " " + ENDC + "\n"
     else:
         out += "\t Sequence Number: " + str(tcp.seq) + "\n"
     if ("ack" in ListAllIn):
-        out += RED + "\t Acknowledgment Number: " + str(tcp.ack) + ENDC + "\n"
+        out += RED + "\t Acknowledgment Number: " + str(tcp.ack) + " " + ENDC + "\n"
     else:
         out += "\t Acknowledgment Number: " + str(tcp.ack) + "\n"
     out += "\t Data Offset: " + str(tcp.dataofs) + "\n"
     out += "\t Reserved: " + str(tcp.reserved) + "\n"
     if ("flags" in ListAllIn):
-        out += RED + "\t Flags:" + tcp.underlayer.sprintf("%TCP.flags%") + ENDC + "\n"
+        out += RED + "\t Flags:" + tcp.underlayer.sprintf("%TCP.flags%") + " " + ENDC + "\n"
     else:
         out += "\t Flags:" + tcp.underlayer.sprintf("%TCP.flags%") + "\n"
     out += "\t Window Size: " + str(tcp.window) + "\n"
@@ -172,11 +172,11 @@ def matchedUdpString(udp, rule):
 
     out = "[UDP Header]" + "\n"
     if (hasattr(rule.src_port, "listPorts") and len(rule.src_port.listPorts) == 1):
-        out += RED + "\t Source Port: " + str(udp.sport) + ENDC + "\n"
+        out += RED + "\t Source Port: " + str(udp.sport) + " " + ENDC + "\n"
     else:
         out += "\t Source Port: " + str(udp.sport) + "\n"
     if (hasattr(rule.dst_port, "listPorts") and len(rule.dst_port.listPorts) == 1):
-        out += RED + "\t Destination Port: " + str(udp.dport) + ENDC + "\n"
+        out += RED + "\t Destination Port: " + str(udp.dport) + " " + ENDC + "\n"
     else:
         out += "\t Destination Port: " + str(udp.dport) + "\n"
     out += "\t Length: " + str(udp.len) + "\n"
@@ -209,11 +209,11 @@ def matchedTcpPayloadString(tcp, rule):
     out = "[TCP Payload]" + "\n"
 
     if (hasattr(rule, "http_request")):
-        out += RED + "HTTP Request: " + str(rule.http_request) + ENDC + "\n"
+        out += RED + "HTTP Request: " + str(rule.http_request) + " " + ENDC + "\n"
 
     if ("content" in ListAllIn and tcp.payload):
         data = str(tcp.payload)
-        # add red color when content found in the string
+        # add red color when content found in the string (I don't print it anymore so just adding ESC on the things that trigger the rule)
         data = re.sub(cont, RED + cont + ENDC, data)
         lines = data.splitlines()
         s = ""
@@ -237,7 +237,7 @@ def matchedUdpPayloadString(udp, rule):
 
     if ("content" in ListAllIn and udp.payload):
         data = str(udp.payload)
-        # add red color when content found in the string
+        # add red color when content found in the string (I don't print it anymore so just adding ESC on the things that trigger the rule)
         data = re.sub(cont, RED + cont + ENDC, data)
         lines = data.splitlines()
         s = ""

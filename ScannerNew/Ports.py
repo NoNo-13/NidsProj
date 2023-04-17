@@ -60,17 +60,3 @@ class Ports:
             return port in self.listPorts
         return False
 
-    def __repr__(self):
-        """ String representation of the Ports : 'any', 'a:b' or 'a,b,c...' """
-        if (self.type == "any"):
-            return "any"
-        elif (self.type == "range"):
-            if (self.lowPort == -1):
-                return ":" + str(self.highPort)
-            else:
-                if (self.highPort == -1):
-                    return str(self.lowPort) + ":"
-                else:
-                    return str(self.lowPort) + ":" + str(self.highPort)
-        elif (self.type == "list"):
-            return self.listPorts.__repr__()

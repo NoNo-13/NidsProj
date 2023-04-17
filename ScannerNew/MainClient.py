@@ -7,8 +7,6 @@ import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QPushButton, QVBoxLayout, QTextEdit, QHBoxLayout, \
     QInputDialog
 
-
-
 class GUI(QWidget):
 
     def __init__(self, Client):
@@ -121,8 +119,6 @@ class GUI(QWidget):
 
         self.input.clear()
 
-
-
 class Client:
     def __init__(self):
         self.IP = socket.gethostbyname(socket.gethostname())  # Host address
@@ -163,15 +159,12 @@ class Client:
         for chunk in chunks:
             self.socket.send(chunk)
 
-
-
     def client_talk(self):
         filename = "RulesToUse.txt"
         self.setting_rule_list(filename)
 
         sniffer_thread = threading.Thread(target=self.sniffer.run)
         sniffer_thread.start()
-
         try:
             while self.connected:
                 if len(self.sniffer.cache) >= 1:
@@ -185,9 +178,6 @@ class Client:
             print("Exiting program...")
             self.sniffer.stop()
 
-
-
-
     def send_update(self, cmd):
         self.send_data(json.dumps({'cmd': cmd}))
 
@@ -199,7 +189,6 @@ class Client:
         print("Reading rule file...")
         self.sniffer.ruleList = RuleFileReader.read(filename)
         print("Finished reading rule file.")
-
 
 def GuiScreen(client):
     app = QApplication(sys.argv)
@@ -215,7 +204,6 @@ def main_Cliient():
     client_command = threading.Thread(target=GuiScreen, args=(client,))
     client_command.start()
     client.client_talk()
-
 
 
 if __name__ == '__main__':
