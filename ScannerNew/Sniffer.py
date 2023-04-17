@@ -7,6 +7,8 @@ from scapy.all import *
 from Utils import *
 from IPNet import *
 from Ports import *
+import warnings
+
 
 
 class Sniffer(Thread):
@@ -28,7 +30,6 @@ class Sniffer(Thread):
         return self.stopped
 
     def inPacket(self, pkt):
-
         """Directive for each received packet."""
         for rule in self.ruleList:
             # Check all rules
@@ -37,15 +38,14 @@ class Sniffer(Thread):
             if (matched):
                 packetStr = self.getMatchedPrintMessage(pkt, rule) #readable string of the packet
                 if (IP in pkt):
-                    self.cache.append([str(rule.options[0].settings), str(pkt[IP].src),str(pkt)]) #msg, packet
+                    self.cache.append([str(rule.options[0].settings), str(pkt[IP].src), repr(pkt)]) #msg, src, packet
                 else:
-                    self.cache.append([str(rule.options[0].settings), "0",str(pkt)]) #msg, packet
+                    self.cache.append([str(rule.options[0].settings), "0", repr(pkt)]) #msg, "0", packet
                 logMessage = self.getMatchedMessage(pkt, rule)
                 logging.warning(logMessage)
                 with open("log.txt", "a") as f:
                     # Write the message to the file
                     f.write(packetStr)
-                print("\nWrite your command: \n")
                 return
 
     def run(self):

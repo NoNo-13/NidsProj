@@ -32,12 +32,10 @@ class TCPServer:
 
     def encryption_gen(self):
         key = Fernet.generate_key()
-        print(key.decode())
         fer = Fernet(key)
         return fer, key
 
     def decryption_data(self, data):
-        print(data)
         decrypted_data = self.keyEnc.decrypt(data).decode()
         print(decrypted_data)
         return decrypted_data
@@ -78,8 +76,9 @@ class TCPServer:
                     dbData = "Id not found"
                 self.send_data(dbData, client_socket)
 
-
         client_socket.close()
+        print("client: " + addr[0] + " disconnected")
+        self.addresses.remove(addr)
 
     def new_connect(self, addr):
         self.addresses.append(addr)
