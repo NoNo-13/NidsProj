@@ -1,11 +1,12 @@
 import socket
-from Sniffer import *
+from Scanner import *
 import RuleFileReader
 from cryptography.fernet import Fernet
 from TestMal import *
 import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QPushButton, QVBoxLayout, QTextEdit, QHBoxLayout, \
     QInputDialog
+
 
 class GUI(QWidget):
 
@@ -22,7 +23,8 @@ class GUI(QWidget):
         self.setWindowTitle(self.title)
         self.setGeometry(self.left, self.top, self.width, self.height)
 
-        self.static_label = QLabel("\nCommands:\nexit, showDb:(all, msg name), getFull: (id name), test: (capture, send)")
+        self.static_label = QLabel(
+            "\nCommands:\nexit, showDb:(all, msg name), getFull: (id name), test: (capture, send)")
         self.static_label.setStyleSheet("font-weight: bold; font-size: 14px;")
 
         # create input field and label
@@ -58,7 +60,6 @@ class GUI(QWidget):
 
         self.setLayout(main_layout)
 
-
         self.show()
 
     def on_click(self, client):
@@ -66,14 +67,14 @@ class GUI(QWidget):
         message = self.input.text()
 
         print(message)
-        if(message == "exit"):
+        if (message == "exit"):
             client.connected = False
             client.sniffer.stop()
             self.close()
 
         if (message == "showDb"):
             message, ok = QInputDialog.getText(None, 'Input Dialog', 'Name of the rule')
-            if(message == "all"):
+            if (message == "all"):
                 client.send_update("showDb")
             else:
                 client.send_update_par("showDb", {"msg": message})
@@ -86,7 +87,6 @@ class GUI(QWidget):
                 i += 1
 
             data = client.decryption_data(data)
-            print(data)
             self.text_edit.append(data)
 
         elif (message == "getFull"):
@@ -101,7 +101,6 @@ class GUI(QWidget):
                 i += 1
 
             data = client.decryption_data(data)
-            print(data)
             self.text_edit.append(data)
 
         elif (message == "test"):
@@ -111,13 +110,14 @@ class GUI(QWidget):
             iface = "ens33"
             count = 1000
             message, ok = QInputDialog.getText(None, 'Input Dialog', 'Enter test capture or send')
-            if(message == "capture"):
+            if (message == "capture"):
                 exploitTest_capture(src, dst, iface, count)
-            if(message == "send"):
+            if (message == "send"):
                 pkt = exploitTest_send(src, dst, iface)
                 client.sniffer.inPacket(pkt)
 
         self.input.clear()
+
 
 class Client:
     def __init__(self):
@@ -125,7 +125,6 @@ class Client:
         self.port = 8820  # Host port
         self.socket = None  # Socket
         self.HEADER_SIZE = 1024
-        self.FORMAT = 'utf-8'
         self.server = (self.IP, self.port)
         self.sniffer = Sniffer()
         self.keyEnc = None
@@ -137,7 +136,7 @@ class Client:
         try:
             self.socket.connect(self.server)
 
-            key = self.socket.recv(1024)
+            key = self.socket.recv(self.HEADER_SIZE)
             self.keyEnc = Fernet(key)
 
         except socket.error as e:
@@ -150,6 +149,7 @@ class Client:
     def decryption_data(self, data):
         decrypted_data = self.keyEnc.decrypt(data).decode()  # f is the variable that has the value of the key.
         return decrypted_data
+
     def send_data(self, data):
         encrypted_data = self.keyEnc.encrypt(bytes(data, 'utf-'))
 
@@ -177,6 +177,7 @@ class Client:
         except KeyboardInterrupt:
             print("Exiting program...")
             self.sniffer.stop()
+            self.close_client()
 
     def send_update(self, cmd):
         self.send_data(json.dumps({'cmd': cmd}))
@@ -190,16 +191,15 @@ class Client:
         self.sniffer.ruleList = RuleFileReader.read(filename)
         print("Finished reading rule file.")
 
+
 def GuiScreen(client):
     app = QApplication(sys.argv)
     ex = GUI(client)
     app.exec_()
     ex.close()
 
-def main_Cliient():
-    import warnings
-    warnings.filterwarnings('error')
 
+def main_Cliient():
     client = Client()
     client_command = threading.Thread(target=GuiScreen, args=(client,))
     client_command.start()

@@ -40,9 +40,9 @@ class DB:
         self.cursor.close()
         self.connection.close()
 
-    def store_packet(self, pkt):
+    def store_packet(self, data):
         try:
-            listPkt = pkt['packet']
+            listPkt = data['packet']
             for each in listPkt:
                 sql = "INSERT INTO packets (msg, src, pkt) VALUES (%s, %s, %s)"
                 values = (each[0], each[1], each[2])

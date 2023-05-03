@@ -115,10 +115,10 @@ def tcpString(tcp):
         out += "\t Flags: " + tcp.underlayer.sprintf("%TCP.flags%") + "\n"
         out += "\t Window Size: " + str(tcp.window) + "\n"
         out += "\t Checksum: " + str(tcp.chksum) + "\n"
-        if (tcp.flags & URG):
+        if (tcp.flags & URG): #When the URG flag is set, it means that the data in the segment is urgent and should be processed before any other data.
             out += "\t Urgent Pointer: " + str(tcp.window) + "\n"
-        if (tcp.dataofs > 5):
-            out += "\t Options: " + str(tcp.options) + "\n"
+        if (tcp.dataofs > 5): #This field indicates the offset from the start of the TCP packet to the beginning of the data in the packet
+            out += "\t Options: " + str(tcp.options) + "\n" #options are additional fields that can be included in the TCP header to provide extra information
         return out
 
 def matchedTcpString(tcp, rule):

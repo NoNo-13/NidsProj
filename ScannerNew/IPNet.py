@@ -17,7 +17,6 @@ class IPNet:
             elif (str(string) == "$EXTERNAL_NET"):
                 self.ipn = "exter"
             else:
-                print(string)
                 strs = string.split("/")
                 if (len(strs) >= 2):
                     # CIDR Block
@@ -35,8 +34,3 @@ class IPNet:
         if (self.ipn == "exter"):
             return (ip not in ip_network(self.IPAddr))
         return (ip in self.ipn)
-
-    def __repr__(self):
-        """String representation of the IPNetwork"""
-
-        return self.ipn.__repr__()
