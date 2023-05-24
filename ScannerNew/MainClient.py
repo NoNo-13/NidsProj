@@ -115,6 +115,7 @@ class GUI(QWidget):
             if (message == "send"):
                 pkt = exploitTest_send(src, dst, iface)
                 client.sniffer.inPacket(pkt)
+
         elif(message == "clean log"):
             with open("log.txt", 'r+') as file:
                 file.truncate(0)
