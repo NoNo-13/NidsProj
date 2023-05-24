@@ -24,7 +24,7 @@ class GUI(QWidget):
         self.setGeometry(self.left, self.top, self.width, self.height)
 
         self.static_label = QLabel(
-            "\nCommands:\nexit, showDb:(all, msg name), getFull: (id name), test: (capture, send)")
+            "\nCommands:\nexit, showDb:(all, msg name), getFull: (id name), test: (capture, send), clean log")
         self.static_label.setStyleSheet("font-weight: bold; font-size: 14px;")
 
         # create input field and label
@@ -115,6 +115,9 @@ class GUI(QWidget):
             if (message == "send"):
                 pkt = exploitTest_send(src, dst, iface)
                 client.sniffer.inPacket(pkt)
+        elif(message == "clean log"):
+            with open("log.txt", 'r+') as file:
+                file.truncate(0)
 
         self.input.clear()
 
