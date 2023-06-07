@@ -14,12 +14,12 @@ def isHTTP(pkt):
     if (TCP in pkt and pkt[TCP].payload):
 
         data = str(pkt[TCP].payload)
-        words = data.split('/')
+        words = data.split('/') #[0]- HTTP or somthing else/ [1]- data or no
         if(len(words) >= 1 and words[0].rstrip() == "HTTP"):
             return True
 
         words = data.split(' ')
-        if(len(words) >= 1 and words[0].rstrip() in HTTPcommands):
+        if(len(words) >= 1 and words[0].rstrip() in HTTPcommands): #valid http commands
             return True
         else:
             return False

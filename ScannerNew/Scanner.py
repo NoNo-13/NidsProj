@@ -50,7 +50,7 @@ class Sniffer(Thread):
 
     def run(self):
         print("Sniffing started.")
-        sniff(prn=self.inPacket, filter="", stop_filter=self.stopfilter) #store=0 increase buffer size to capture more at once
+        sniff(prn=self.inPacket, filter="", stop_filter=self.stopfilter)
 
     def match(self, pkt, rule):
         """
@@ -109,7 +109,7 @@ class Sniffer(Thread):
         else:
             srcIp = pkt[IP].src
             dstIp = pkt[IP].dst
-            ipSrc = ip_address(srcIp)
+            ipSrc = ip_address(srcIp) #making the ip like the type of ip address from string
             ipDst = ip_address(dstIp)
             if (rule.src.contains(ipSrc) and rule.dst.contains(ipDst)):
                 # ipSrc and ipDst match rule's source and destination ips
@@ -137,8 +137,8 @@ class Sniffer(Thread):
     def checkOptions(self, pkt, rule):
         """ Return True if and only if all options are matched """
 
-        """hasattr- returns true if an object has the given named attribute and false if it does not."""
         for op in rule.options:
+
             if (op.keyword == "tos"):
                 if (IP in pkt):
                     if (op.settings != int(pkt[IP].tos)):

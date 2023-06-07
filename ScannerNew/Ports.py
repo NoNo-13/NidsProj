@@ -8,7 +8,7 @@ class Ports:
         """
         Construct a Ports, using input string that is of the form list : a,b,c or range a:b or 'any'.
 
-        The list can be of one element, e.g. '32'.
+        The list can be of one or more elements, e.g. [32, 3, 267].
         The range should be in correct order, e.g. 30:100 and not 100:30.
         'any' means that the instance will contain any port.
         """

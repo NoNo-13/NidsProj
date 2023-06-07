@@ -15,8 +15,7 @@ def read(filename):
 
 def PrepareRule(rule):
     """
-        There are several options that the IP and Port will look like in each rule
-        exp- any, [x, y, z] etc
+        There are several options that the IP and Port could look like in each rule
     """
     rule.src = IPNet(rule.src)
     rule.src_port = Ports(rule.src_port)

@@ -8,9 +8,9 @@ from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QPushButto
     QInputDialog
 
 
-class GUI(QWidget):
+class GUI(QWidget): #subclass of QWidget. Is a base class for all GUI objects in PyQt.
 
-    def __init__(self, Client):
+    def __init__(self, Client): #set up the UI elements and properties
         super().__init__()
         self.title = 'Client GUI'
         self.left = 600
@@ -19,7 +19,7 @@ class GUI(QWidget):
         self.height = 500
         self.initUI(Client)
 
-    def initUI(self, client):
+    def initUI(self, client): #sets the window title and geometry (position and size)
         self.setWindowTitle(self.title)
         self.setGeometry(self.left, self.top, self.width, self.height)
 
@@ -108,7 +108,7 @@ class GUI(QWidget):
             dst = socket.gethostbyname(hostname)
             src = '1.2.3.4'
             iface = "ens33"
-            count = 1000
+            count = 10
             message, ok = QInputDialog.getText(None, 'Input Dialog', 'Enter test capture or send')
             if (message == "capture"):
                 exploitTest_capture(src, dst, iface, count)
